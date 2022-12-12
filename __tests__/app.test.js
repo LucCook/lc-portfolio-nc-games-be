@@ -13,8 +13,7 @@ describe("GET api/categories", () => {
     return request(app)
       .get("/api/categories")
       .expect(200)
-      .then(({ body }) => {
-        const { categories } = body;
+      .then(({ body : {categories}}) => {
         expect(categories.length).toBe(4);
         categories.forEach((category) => {
           expect(category).toEqual(
@@ -33,8 +32,7 @@ describe("GET api/reviews", () => {
     return request(app)
       .get("/api/reviews")
       .expect(200)
-      .then(({ body }) => {
-        const { reviews } = body;
+      .then(({ body : {reviews}}) => {
         expect(reviews.length).toBe(13);
         reviews.forEach((review) => {
           expect(review).toEqual(
@@ -57,9 +55,46 @@ describe("GET api/reviews", () => {
     return request(app)
       .get("/api/reviews")
       .expect(200)
-      .then(({ body }) => {
-        const { reviews } = body;
+      .then(({ body: {reviews} }) => {
         expect(reviews).toBeSortedBy("created_at", { descending: true });
+      });
+  });
+});
+
+describe("GET /api/reviews/:review_id", () => {
+  test("200: should respond with a single object, with properties (review_id, title, review_body, designer, review_img_url, votes, category, owner, created_at) when passed a valid review_id", () => {
+    return request(app)
+      .get("/api/reviews/1")
+      .expect(200)
+      .then(({ body: {review} }) => {
+        expect(review).toEqual({
+            review_id: 1,
+          title: "Agricola",
+          designer: "Uwe Rosenberg",
+          owner: "mallionaire",
+          review_img_url:
+            "https://www.golenbock.com/wp-content/uploads/2015/01/placeholder-user.png",
+          review_body: "Farmyard fun!",
+          category: "euro game",
+          created_at: "2021-01-18T10:00:20.514Z",
+          votes: 1,
+        });
+      });
+  });
+  test("404: not found when review_id is valid but does not exist in table", () => {
+    return request(app)
+      .get("/api/reviews/10000")
+      .expect(404)
+      .then(({ body : {msg} }) => {
+        expect(msg).toBe("not found")
+      });
+  });
+  test("400: bad request when review_id is an invalid data type", () => {
+    return request(app)
+      .get("/api/reviews/pineapple")
+      .expect(400)
+      .then(({ body : {msg} }) => {
+        expect(msg).toBe("bad request")
       });
   });
 });
@@ -69,8 +104,7 @@ describe("request invalid path", () => {
     return request(app)
       .get("/asjdfnkjasdnfjk")
       .expect(404)
-      .then(({ body }) => {
-        const { msg } = body;
+      .then(({ body: {msg} }) => {
         expect(msg).toBe("not found");
       });
   });
