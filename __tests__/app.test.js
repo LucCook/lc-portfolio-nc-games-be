@@ -120,6 +120,14 @@ describe("GET /api/reviews/:review_id/comments", () => {
         });
       });
   });
+  test("200: returned array should be sorted by created_at, descending", () => {
+    return request(app)
+      .get("/api/reviews/2/comments")
+      .expect(200)
+      .then(({ body: { comments } }) => {
+        expect(comments).toBeSortedBy("created_at", { descending: true });
+      });
+  });
   test("404: not found if no comments with the specified review_id", () => {
     return request(app)
       .get("/api/reviews/200/comments")
