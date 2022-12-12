@@ -13,7 +13,7 @@ describe("GET api/categories", () => {
     return request(app)
       .get("/api/categories")
       .expect(200)
-      .then(({ body : {categories}}) => {
+      .then(({ body: { categories } }) => {
         expect(categories.length).toBe(4);
         categories.forEach((category) => {
           expect(category).toEqual(
@@ -32,7 +32,7 @@ describe("GET api/reviews", () => {
     return request(app)
       .get("/api/reviews")
       .expect(200)
-      .then(({ body : {reviews}}) => {
+      .then(({ body: { reviews } }) => {
         expect(reviews.length).toBe(13);
         reviews.forEach((review) => {
           expect(review).toEqual(
@@ -55,7 +55,7 @@ describe("GET api/reviews", () => {
     return request(app)
       .get("/api/reviews")
       .expect(200)
-      .then(({ body: {reviews} }) => {
+      .then(({ body: { reviews } }) => {
         expect(reviews).toBeSortedBy("created_at", { descending: true });
       });
   });
@@ -66,9 +66,9 @@ describe("GET /api/reviews/:review_id", () => {
     return request(app)
       .get("/api/reviews/1")
       .expect(200)
-      .then(({ body: {review} }) => {
+      .then(({ body: { review } }) => {
         expect(review).toEqual({
-            review_id: 1,
+          review_id: 1,
           title: "Agricola",
           designer: "Uwe Rosenberg",
           owner: "mallionaire",
@@ -85,16 +85,55 @@ describe("GET /api/reviews/:review_id", () => {
     return request(app)
       .get("/api/reviews/10000")
       .expect(404)
-      .then(({ body : {msg} }) => {
-        expect(msg).toBe("not found")
+      .then(({ body: { msg } }) => {
+        expect(msg).toBe("not found");
       });
   });
   test("400: bad request when review_id is an invalid data type", () => {
     return request(app)
       .get("/api/reviews/pineapple")
       .expect(400)
-      .then(({ body : {msg} }) => {
-        expect(msg).toBe("bad request")
+      .then(({ body: { msg } }) => {
+        expect(msg).toBe("bad request");
+      });
+  });
+});
+
+describe("GET /api/reviews/:review_id/comments", () => {
+  test("200: should return an array of objects, each with properties (comment_id, votes, created_at, author, body, review_id)", () => {
+    return request(app)
+      .get("/api/reviews/2/comments")
+      .expect(200)
+      .then(({ body: { comments } }) => {
+        expect(comments.length).toBe(3);
+        comments.forEach((comment) => {
+          expect(comment).toEqual(
+            expect.objectContaining({
+              comment_id: expect.any(Number),
+              votes: expect.any(Number),
+              created_at: expect.any(String),
+              author: expect.any(String),
+              body: expect.any(String),
+              review_id: expect.toBeInteger(2),
+            })
+          );
+        });
+      });
+  });
+  test("404: not found if no comments with the specified review_id", () => {
+    return request(app)
+      .get("/api/reviews/200/comments")
+      .expect(404)
+      .then(({ body: { msg } }) => {
+        expect(msg).toBe("not found");
+      });
+  });
+  test("400: bad request if review_id not valid data type", () => {
+    return request(app)
+      .get("/api/reviews/pineapple/comments")
+      .expect(400)
+      .then(({ body: { msg } }) => {
+        expect(msg).toBe("bad request");
       });
   });
 });
@@ -104,7 +143,7 @@ describe("request invalid path", () => {
     return request(app)
       .get("/asjdfnkjasdnfjk")
       .expect(404)
-      .then(({ body: {msg} }) => {
+      .then(({ body: { msg } }) => {
         expect(msg).toBe("not found");
       });
   });
