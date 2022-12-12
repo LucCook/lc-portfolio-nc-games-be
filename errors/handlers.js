@@ -1,6 +1,6 @@
 exports.handle500 = (err, req, res, next) => {
     console.log(err)
-    res.status(500).send("apologies for my wonky code")
+    res.status(500).send({msg : "apologies for my wonky code"})
 }
 
 exports.handle404 = (req, res) => {
