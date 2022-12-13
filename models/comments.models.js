@@ -7,8 +7,6 @@ exports.selectCommentsByReviewId = (reviewId) => {
       [reviewId]
     )
     .then(({ rows: comments }) => {
-      if (!comments.length) {
-        return Promise.reject({ status: 404, msg: "not found" });
-      } else return comments;
+      return comments;
     });
 };

@@ -128,9 +128,17 @@ describe("GET /api/reviews/:review_id/comments", () => {
         expect(comments).toBeSortedBy("created_at", { descending: true });
       });
   });
-  test("404: not found if no comments with the specified review_id", () => {
+  test("200: returns empty array if no comments with the specified review_id, but the review_id exists in the review table", () => {
     return request(app)
-      .get("/api/reviews/200/comments")
+      .get("/api/reviews/5/comments")
+      .expect(200)
+      .then(({ body: { comments } }) => {
+        expect(comments).toEqual([]);
+      });
+  });
+  test("404: not found if the review_id DOES NOT exist in the review table", () => {
+    return request(app)
+      .get("/api/reviews/5005/comments")
       .expect(404)
       .then(({ body: { msg } }) => {
         expect(msg).toBe("not found");
