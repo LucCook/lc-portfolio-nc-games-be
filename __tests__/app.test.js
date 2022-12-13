@@ -223,7 +223,17 @@ describe("PATCH /api/reviews/:review_id", () => {
       .send(voteUpdate)
       .expect(200)
       .then(({ body: { review } }) => {
-        expect(review.votes).toBe(101);
+        expect(review).toEqual(expect.objectContaining({
+          title: expect.any(String),
+          votes: 101,
+          designer: expect.any(String),
+          review_id: 1,
+          created_at: expect.any(String),
+          review_img_url: expect.any(String),
+          category: expect.any(String),
+          review_body: expect.any(String)
+        }))
+        
       });
   });
   test("200: returns updated comment if patch succesful (decrease votes)", () => {
@@ -233,7 +243,16 @@ describe("PATCH /api/reviews/:review_id", () => {
       .send(voteUpdate)
       .expect(200)
       .then(({ body: { review } }) => {
-        expect(review.votes).toBe(-99);
+        expect(review).toEqual(expect.objectContaining({
+          title: expect.any(String),
+          votes: -99,
+          designer: expect.any(String),
+          review_id: 1,
+          created_at: expect.any(String),
+          review_img_url: expect.any(String),
+          category: expect.any(String),
+          review_body: expect.any(String)
+        }))
       });
   });
   test("400: bad request if inc_votes is wrong data type", () => {
