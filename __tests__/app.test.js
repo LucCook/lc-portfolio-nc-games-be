@@ -114,7 +114,7 @@ describe("GET /api/reviews/:review_id/comments", () => {
               created_at: expect.any(String),
               author: expect.any(String),
               body: expect.any(String),
-              review_id: expect.toBeInteger(2),
+              review_id: 2,
             })
           );
         });

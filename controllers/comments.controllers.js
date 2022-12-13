@@ -1,9 +1,9 @@
 const { selectCommentsByReviewId, insertCommentByReviewId } = require("../models/comments.models");
-const { checkColExists } = require("../models/utility.models");
+const { checkValueExists } = require("../models/utility.models");
 
 
 exports.getCommentsByReviewId = (req, res, next) => {
-  Promise.all([selectCommentsByReviewId(req.params.review_id), checkColExists('reviews', 'review_id', req.params.review_id)
+  Promise.all([selectCommentsByReviewId(req.params.review_id), checkValueExists('reviews', 'review_id', req.params.review_id)
   ])
   
     .then(([comments]) => {
