@@ -64,70 +64,70 @@ describe("GET api/reviews", () => {
 describe("GET api/reviews?queries", () => {
   test("200: should respond with an array of objects, filtered by category value when passed a category query parameter", () => {
     return request(app)
-    .get("/api/reviews?category=social_deduction")
-    .expect(200)
-    .then(({body: {reviews}}) => {
-      expect(reviews.length).toBe(11)
-      reviews.forEach((review) => {
-        expect(review.category).toBe("social deduction")
-      })
-    })
-  })
+      .get("/api/reviews?category=social_deduction")
+      .expect(200)
+      .then(({ body: { reviews } }) => {
+        expect(reviews.length).toBe(11);
+        reviews.forEach((review) => {
+          expect(review.category).toBe("social deduction");
+        });
+      });
+  });
   test("200: should respond with an array of objects, sorted by the column defined by the sort_by parameter", () => {
     return request(app)
-    .get("/api/reviews?sort_by=votes")
-    .expect(200)
-    .then(({body: {reviews}}) => {
-      expect(reviews.length).toBe(13)
-      expect(reviews).toBeSortedBy("votes", {descending: true})
-    })
-  })
+      .get("/api/reviews?sort_by=votes")
+      .expect(200)
+      .then(({ body: { reviews } }) => {
+        expect(reviews.length).toBe(13);
+        expect(reviews).toBeSortedBy("votes", { descending: true });
+      });
+  });
   test("200: should respond with an array of objects, sorted by date, ascending if passed ASC as order parameter", () => {
     return request(app)
-    .get("/api/reviews?order=ASC")
-    .expect(200)
-    .then(({body: {reviews}}) => {
-      expect(reviews.length).toBe(13)
-      expect(reviews).toBeSortedBy("created_at", {descending: false})
-    })
-  })
+      .get("/api/reviews?order=ASC")
+      .expect(200)
+      .then(({ body: { reviews } }) => {
+        expect(reviews.length).toBe(13);
+        expect(reviews).toBeSortedBy("created_at", { descending: false });
+      });
+  });
   test("200: should respond appropriately when passed a combination of query parameters", () => {
     return request(app)
-    .get("/api/reviews?category=social_deduction&sort_by=votes&order=ASC")
-    .expect(200)
-    .then(({body: {reviews}}) => {
-      expect(reviews.length).toBe(11)
-      expect(reviews).toBeSortedBy("votes", {descending: false})
-      reviews.forEach((review) => {
-        expect(review.category).toBe("social deduction")
-      })
-    })
-  })
+      .get("/api/reviews?category=social_deduction&sort_by=votes&order=ASC")
+      .expect(200)
+      .then(({ body: { reviews } }) => {
+        expect(reviews.length).toBe(11);
+        expect(reviews).toBeSortedBy("votes", { descending: false });
+        reviews.forEach((review) => {
+          expect(review.category).toBe("social deduction");
+        });
+      });
+  });
   test("400: bad request if sort_by parameter is not a column", () => {
     return request(app)
-    .get("/api/reviews?sort_by=most_number_of_pieces")
-    .expect(400)
-    .then(({body: {msg}}) => {
-      expect(msg).toBe("bad request")
-    })
-  })
+      .get("/api/reviews?sort_by=most_number_of_pieces")
+      .expect(400)
+      .then(({ body: { msg } }) => {
+        expect(msg).toBe("bad request");
+      });
+  });
   test("400: bad request if order parameter is not ASC / DESC", () => {
     return request(app)
-    .get("/api/reviews?order=DROP_TABLES")
-    .expect(400)
-    .then(({body: {msg}}) => {
-      expect(msg).toBe("bad request")
-    })
-  })
+      .get("/api/reviews?order=DROP_TABLES")
+      .expect(400)
+      .then(({ body: { msg } }) => {
+        expect(msg).toBe("bad request");
+      });
+  });
   test("404: not found if category parameter does not exist in category table", () => {
     return request(app)
-    .get("/api/reviews?category=first_person_shooters")
-    .expect(404)
-    .then(({body: {msg}}) => {
-      expect(msg).toBe("not found")
-    })
-  })
-})
+      .get("/api/reviews?category=first_person_shooters")
+      .expect(404)
+      .then(({ body: { msg } }) => {
+        expect(msg).toBe("not found");
+      });
+  });
+});
 
 describe("GET /api/reviews/:review_id", () => {
   test("200: should respond with a single object, with properties (review_id, title, review_body, designer, review_img_url, votes, category, owner, created_at) when passed a valid review_id", () => {
@@ -169,15 +169,15 @@ describe("GET /api/reviews/:review_id", () => {
   });
 });
 
-describe('GET /api/reviews/:review_id - with comment_count', () => {
+describe("GET /api/reviews/:review_id - with comment_count", () => {
   test("200: should respond with a single object, with additional property of comment_count, equal to the number of comments associated with this review", () => {
     return request(app)
-    .get("/api/reviews/2")
-    .expect(200)
-    .then(({body : {review}}) => {
-      expect(review.comment_count).toBe(3)
-    })
-  })
+      .get("/api/reviews/2")
+      .expect(200)
+      .then(({ body: { review } }) => {
+        expect(review.comment_count).toBe(3);
+      });
+  });
 });
 
 describe("GET /api/reviews/:review_id/comments", () => {
@@ -325,17 +325,18 @@ describe("PATCH /api/reviews/:review_id", () => {
       .send(voteUpdate)
       .expect(200)
       .then(({ body: { review } }) => {
-        expect(review).toEqual(expect.objectContaining({
-          title: expect.any(String),
-          votes: 101,
-          designer: expect.any(String),
-          review_id: 1,
-          created_at: expect.any(String),
-          review_img_url: expect.any(String),
-          category: expect.any(String),
-          review_body: expect.any(String)
-        }))
-        
+        expect(review).toEqual(
+          expect.objectContaining({
+            title: expect.any(String),
+            votes: 101,
+            designer: expect.any(String),
+            review_id: 1,
+            created_at: expect.any(String),
+            review_img_url: expect.any(String),
+            category: expect.any(String),
+            review_body: expect.any(String),
+          })
+        );
       });
   });
   test("200: returns updated comment if patch succesful (decrease votes)", () => {
@@ -345,16 +346,18 @@ describe("PATCH /api/reviews/:review_id", () => {
       .send(voteUpdate)
       .expect(200)
       .then(({ body: { review } }) => {
-        expect(review).toEqual(expect.objectContaining({
-          title: expect.any(String),
-          votes: -99,
-          designer: expect.any(String),
-          review_id: 1,
-          created_at: expect.any(String),
-          review_img_url: expect.any(String),
-          category: expect.any(String),
-          review_body: expect.any(String)
-        }))
+        expect(review).toEqual(
+          expect.objectContaining({
+            title: expect.any(String),
+            votes: -99,
+            designer: expect.any(String),
+            review_id: 1,
+            created_at: expect.any(String),
+            review_img_url: expect.any(String),
+            category: expect.any(String),
+            review_body: expect.any(String),
+          })
+        );
       });
   });
   test("400: bad request if inc_votes is wrong data type", () => {
@@ -394,6 +397,25 @@ describe("PATCH /api/reviews/:review_id", () => {
       .send(voteUpdate)
       .expect(404)
       .then(({ body: { msg } }) => {
+        expect(msg).toBe("not found");
+      });
+  });
+});
+
+describe("DELETE /api/comments/:comment_id", () => {
+  test("204: no content when deletion is succesful", () => {
+    return request(app)
+      .delete("/api/comments/1")
+      .expect(204)
+      .then(({ body }) => {
+        expect(body).toEqual({});
+      });
+  });
+  test("404: not found when comment_id does not exist in comments table", () => {
+    return request(app)
+      .delete("/api/comments/1002")
+      .expect(404)
+      .then(({ body : {msg}}) => {
         expect(msg).toBe("not found");
       });
   });
