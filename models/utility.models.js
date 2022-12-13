@@ -1,7 +1,7 @@
 const db = require("../db/connection.js");
 const format = require("pg-format");
 
-exports.checkColExists = (table, column, value) => {
+exports.checkValueExists = (table, column, value) => {
     const sqlString = format(
       "SELECT * FROM %I WHERE %I = %L",
       table,
