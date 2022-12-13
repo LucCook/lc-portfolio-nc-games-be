@@ -16,5 +16,5 @@ exports.handleCustom = (error, req, res, next) => {
 exports.handle400 = (error, req, res, next) => {
     if (error.code === "22P02") {
         res.status(400).send({msg: "bad request"})
-    }
+    } else next(error)
 }
