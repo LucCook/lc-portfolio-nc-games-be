@@ -19,3 +19,11 @@ exports.selectReviewById = (reviewId) => {
       } else return review;
     });
 };
+
+exports.updateReview = (patchData, reviewId) => {
+  
+  const {inc_votes} = patchData
+  return db.query("UPDATE reviews SET votes = votes + $1 WHERE review_id = $2 RETURNING *", [inc_votes, reviewId]).then(({rows: [review]}) => {
+    return review
+  })
+}

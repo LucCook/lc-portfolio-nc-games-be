@@ -153,65 +153,106 @@ describe("GET /api/reviews/:review_id/comments", () => {
       });
   });
 });
-
 describe('POST /api/reviews/:review_id/comments', () => {
-    test("201: responds with posted comment if succesful", () => {
-        const newComment = { username: 'dav3rid', body: 'life changing'}
-        return request(app)
-        .post("/api/reviews/1/comments")
-        .send(newComment)
-        .expect(201)
-        .then(({body: {comment}}) => {
-            expect(comment).toEqual(
-              expect.objectContaining({
-                comment_id: expect.any(Number),
-                votes: expect.any(Number),
-                created_at: expect.any(String),
-                author: expect.any(String),
-                body: expect.any(String),
-                review_id: 1,
-            })
-        )
-    })
-  })
-    test("404: not found if username does not exist in users table", () => {
-        const newComment = { username: 'fakeName123', body: 'life changing'}
-        return request(app)
-        .post("/api/reviews/1/comments")
-        .send(newComment)
-        .expect(404).then(({body : {msg}}) => {
-            expect(msg).toBe("not found")
-        })
-    })
-    test("404: not found if review_id does not exist in reviews table", () => {
-        const newComment = { username: 'dav3rid', body: 'life changing'}
-        return request(app)
-        .post("/api/reviews/1001/comments")
-        .send(newComment)
-        .expect(404).then(({body : {msg}}) => {
-            expect(msg).toBe("not found")
-        })
-    })
-    test("400: bad request if review_id is invalid data type", () => {
-        const newComment = { username: 'dav3rid', body: 'life changing'}
-        return request(app)
-        .post("/api/reviews/pineapple/comments")
-        .send(newComment)
-        .expect(400).then(({body : {msg}}) => {
-            expect(msg).toBe("bad request")
-        })
-    })
-    test("400: bad request if missing required fields / wrong keys on object", () => {
-      const newComment = { wrongKeyOne: 'dav3rid', wrongKeyTwo: 'life changing'}
+  test("201: responds with posted comment if succesful", () => {
+      const newComment = { username: 'dav3rid', body: 'life changing'}
       return request(app)
       .post("/api/reviews/1/comments")
+      .send(newComment)
+      .expect(201)
+      .then(({body: {comment}}) => {
+          expect(comment).toEqual(
+            expect.objectContaining({
+              comment_id: expect.any(Number),
+              votes: expect.any(Number),
+              created_at: expect.any(String),
+              author: expect.any(String),
+              body: expect.any(String),
+              review_id: 1,
+          })
+      )
+  })
+})
+  test("404: not found if username does not exist in users table", () => {
+      const newComment = { username: 'fakeName123', body: 'life changing'}
+      return request(app)
+      .post("/api/reviews/1/comments")
+      .send(newComment)
+      .expect(404).then(({body : {msg}}) => {
+          expect(msg).toBe("not found")
+      })
+  })
+  test("404: not found if review_id does not exist in reviews table", () => {
+      const newComment = { username: 'dav3rid', body: 'life changing'}
+      return request(app)
+      .post("/api/reviews/1001/comments")
+      .send(newComment)
+      .expect(404).then(({body : {msg}}) => {
+          expect(msg).toBe("not found")
+      })
+  })
+  test("400: bad request if review_id is invalid data type", () => {
+      const newComment = { username: 'dav3rid', body: 'life changing'}
+      return request(app)
+      .post("/api/reviews/pineapple/comments")
       .send(newComment)
       .expect(400).then(({body : {msg}}) => {
           expect(msg).toBe("bad request")
       })
   })
+  test("400: bad request if missing required fields / wrong keys on object", () => {
+    const newComment = { wrongKeyOne: 'dav3rid', wrongKeyTwo: 'life changing'}
+    return request(app)
+    .post("/api/reviews/1/comments")
+    .send(newComment)
+    .expect(400).then(({body : {msg}}) => {
+        expect(msg).toBe("bad request")
+    })
+})
 });
 
+describe('PATCH /api/reviews/:review_id', () => {
+  test("200: returns updated comment if patch succesful (increase votes)", () => {
+    const voteUpdate = {inc_votes: 100}
+    return request(app)
+      .patch("/api/reviews/1")
+      .send(voteUpdate)
+      .expect(200)
+      .then(({body: {review}}) => {
+        expect(review.votes).toBe(101)
+      })
+  })
+  test("200: returns updated comment if patch succesful (decrease votes)", () => {
+    const voteUpdate = {inc_votes: -100}
+    return request(app)
+      .patch("/api/reviews/1")
+      .send(voteUpdate)
+      .expect(200)
+      .then(({body: {review}}) => {
+        expect(review.votes).toBe(-99)
+      })
+  })
+  test("400: bad request if inc_votes is wrong data type", () => {
+    const voteUpdate = {inc_votes: "pineapple"}
+    return request(app)
+      .patch("/api/reviews/1")
+      .send(voteUpdate)
+      .expect(400)
+      .then(({body: {msg}}) => {
+        expect(msg).toBe("bad request")
+      })
+  })
+  test("400: bad request if inc_votes is missing from body", () => {
+    const voteUpdate = {}
+    return request(app)
+      .patch("/api/reviews/1")
+      .send(voteUpdate)
+      .expect(400)
+      .then(({body: {msg}}) => {
+        expect(msg).toBe("bad request")
+      })
+  })
+});
 describe("request invalid path", () => {
   test("404: not found when requesting a non existent path", () => {
     return request(app)
