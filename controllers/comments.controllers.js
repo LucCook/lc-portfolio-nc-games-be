@@ -3,7 +3,7 @@ const { checkValueExists } = require("../models/utility.models");
 
 
 exports.getCommentsByReviewId = (req, res, next) => {
-  Promise.all([selectCommentsByReviewId(req.params.review_id), checkValueExists('reviews', 'review_id', req.params.review_id)
+  Promise.all([selectCommentsByReviewId(req.params.review_id), checkValueExists('reviews', 'review_id', parseInt(req.params.review_id))
   ])
   
     .then(([comments]) => {

@@ -6,7 +6,12 @@ const {
 const { checkValueExists } = require("../models/utility.models");
 
 exports.getReviews = (req, res, next) => {
-    selectReviews(req.query).then((reviews) => {
+    
+    const promises = [selectReviews(req.query)]
+    if (req.query.category) {
+      promises.push(checkValueExists('categories', 'slug', req.query.category))
+    }
+    Promise.all(promises).then(([reviews]) => {
         res.status(200).send({reviews})
     }).catch(next)
 }
