@@ -135,18 +135,20 @@ describe("GET /api/reviews/:review_id", () => {
       .get("/api/reviews/1")
       .expect(200)
       .then(({ body: { review } }) => {
-        expect(review).toEqual({
-          review_id: 1,
-          title: "Agricola",
-          designer: "Uwe Rosenberg",
-          owner: "mallionaire",
-          review_img_url:
-            "https://www.golenbock.com/wp-content/uploads/2015/01/placeholder-user.png",
-          review_body: "Farmyard fun!",
-          category: "euro game",
-          created_at: "2021-01-18T10:00:20.514Z",
-          votes: 1,
-        });
+        expect(review).toEqual(
+          expect.objectContaining({
+            review_id: 1,
+            title: "Agricola",
+            designer: "Uwe Rosenberg",
+            owner: "mallionaire",
+            review_img_url:
+              "https://www.golenbock.com/wp-content/uploads/2015/01/placeholder-user.png",
+            review_body: "Farmyard fun!",
+            category: "euro game",
+            created_at: "2021-01-18T10:00:20.514Z",
+            votes: 1,
+          })
+        );
       });
   });
   test("404: not found when review_id is valid but does not exist in table", () => {
@@ -165,6 +167,17 @@ describe("GET /api/reviews/:review_id", () => {
         expect(msg).toBe("bad request");
       });
   });
+});
+
+describe('GET /api/reviews/:review_id - with comment_count', () => {
+  test("200: should respond with a single object, with additional property of comment_count, equal to the number of comments associated with this review", () => {
+    return request(app)
+    .get("/api/reviews/2")
+    .expect(200)
+    .then(({body : {review}}) => {
+      expect(review.comment_count).toBe(3)
+    })
+  })
 });
 
 describe("GET /api/reviews/:review_id/comments", () => {
