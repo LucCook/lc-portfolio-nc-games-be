@@ -1,5 +1,5 @@
 const { selectReviews, selectReviewById, updateReview } = require("../models/reviews.models")
-const { checkColExists } = require("../models/utility.models")
+const { checkValueExists } = require("../models/utility.models")
 
 exports.getReviews = (req, res, next) => {
     selectReviews().then((reviews) => {
@@ -15,7 +15,7 @@ exports.getReviewById = (req, res, next) => {
 
 exports.patchReview = (req, res, next) => {
     Promise.all([
-        updateReview(req.body, req.params.review_id), checkColExists('reviews', 'review_id', req.params.review_id)
+        updateReview(req.body, req.params.review_id), checkValueExists('reviews', 'review_id', req.params.review_id)
     ])
     .then(([review]) => {
         res.status(200).send({review})

@@ -253,6 +253,7 @@ describe('PATCH /api/reviews/:review_id', () => {
       })
   })
 });
+
 describe("request invalid path", () => {
   test("404: not found when requesting a non existent path", () => {
     return request(app)
