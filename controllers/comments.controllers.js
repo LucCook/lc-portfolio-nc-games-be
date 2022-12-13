@@ -1,4 +1,4 @@
-const { checkColExists } = require("../db/seeds/utils");
+const { checkColExists } = require("../models/utility.models");
 const { selectCommentsByReviewId } = require("../models/comments.models");
 
 exports.getCommentsByReviewId = (req, res, next) => {
