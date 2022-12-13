@@ -419,6 +419,14 @@ describe("DELETE /api/comments/:comment_id", () => {
         expect(msg).toBe("not found");
       });
   });
+  test("400: bad request when comment_id is wrong data-type", () => {
+    return request(app)
+      .delete("/api/comments/pineapple")
+      .expect(400)
+      .then(({ body : {msg}}) => {
+        expect(msg).toBe("bad request");
+      });
+  });
 });
 
 describe("request invalid path", () => {
