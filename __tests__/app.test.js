@@ -61,6 +61,17 @@ describe("GET api/reviews", () => {
   });
 });
 
+describe("GET api/reviews?queries", () => {
+  test("200: should respond with an array of objects, filtered by category value when passed a category query parameter", () => {
+    return request(app)
+    .get("/api/reviews?category=social_deduction")
+    .expect(200)
+    .then(({body: {reviews}}) => {
+      expect(reviews.le)
+    })
+  })
+})
+
 describe("GET /api/reviews/:review_id", () => {
   test("200: should respond with a single object, with properties (review_id, title, review_body, designer, review_img_url, votes, category, owner, created_at) when passed a valid review_id", () => {
     return request(app)

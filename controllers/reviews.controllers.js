@@ -6,12 +6,10 @@ const {
 const { checkValueExists } = require("../models/utility.models");
 
 exports.getReviews = (req, res, next) => {
-  selectReviews()
-    .then((reviews) => {
-      res.status(200).send({ reviews });
-    })
-    .catch(next);
-};
+    selectReviews(req.query).then((reviews) => {
+        res.status(200).send({reviews})
+    }).catch(next)
+}
 
 exports.getReviewById = (req, res, next) => {
   selectReviewById(req.params.review_id)
