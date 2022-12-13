@@ -1,8 +1,12 @@
 const { selectCommentsByReviewId, insertCommentByReviewId } = require("../models/comments.models");
+const { checkColExists } = require("../models/utility.models");
+
 
 exports.getCommentsByReviewId = (req, res, next) => {
-  selectCommentsByReviewId(req.params.review_id)
-    .then((comments) => {
+  Promise.all([selectCommentsByReviewId(req.params.review_id), checkColExists('reviews', 'review_id', req.params.review_id)
+  ])
+  
+    .then(([comments]) => {
       res.status(200).send({ comments });
     })
     .catch(next);
