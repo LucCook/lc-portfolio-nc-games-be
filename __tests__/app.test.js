@@ -75,7 +75,7 @@ describe("GET api/reviews?queries", () => {
       });
   });
   test("200: should respond with an array of objects, sorted by the column defined by the sort_by parameter", () => {
-
+    return request(app)
     .get("/api/reviews?category=social_deduction")
     .expect(200)
     .then(({body: {reviews}}) => {
