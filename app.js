@@ -3,6 +3,7 @@ const { getCategories } = require("./controllers/categories.controllers");
 const {
   getCommentsByReviewId,
   postCommentByReviewId,
+  deleteComment,
 } = require("./controllers/comments.controllers");
 const {
   getReviews,
@@ -27,6 +28,7 @@ app.get("/api/reviews/:review_id", getReviewById);
 app.get("/api/reviews/:review_id/comments", getCommentsByReviewId);
 app.post("/api/reviews/:review_id/comments", postCommentByReviewId);
 app.patch("/api/reviews/:review_id", patchReview)
+app.delete("/api/comments/:comment_id", deleteComment)
 
 app.all("*", handle404);
 

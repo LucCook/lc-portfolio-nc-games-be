@@ -1,4 +1,4 @@
-const { selectCommentsByReviewId, insertCommentByReviewId } = require("../models/comments.models");
+const { selectCommentsByReviewId, insertCommentByReviewId, removeComment } = require("../models/comments.models");
 const { checkValueExists } = require("../models/utility.models");
 
 
@@ -16,4 +16,10 @@ exports.postCommentByReviewId = (req, res, next) => {
     insertCommentByReviewId(req.body, req.params.review_id).then((comment) => {
         res.status(201).send({comment})
     }).catch(next)
+}
+
+exports.deleteComment = (req, res, next) => {
+  removeComment(req.params.comment_id).then(() => {
+    res.status(204).send({})
+  }).catch(next)
 }
