@@ -64,6 +64,7 @@ describe("GET api/reviews", () => {
 describe("GET api/reviews?queries", () => {
   test("200: should respond with an array of objects, filtered by category value when passed a category query parameter", () => {
     return request(app)
+
       .get("/api/reviews?category=social_deduction")
       .expect(200)
       .then(({ body: { reviews } }) => {
@@ -74,6 +75,25 @@ describe("GET api/reviews?queries", () => {
       });
   });
   test("200: should respond with an array of objects, sorted by the column defined by the sort_by parameter", () => {
+
+    .get("/api/reviews?category=social_deduction")
+    .expect(200)
+    .then(({body: {reviews}}) => {
+      expect(reviews.length).toBe(11)
+      reviews.forEach((review) => {
+        expect(review.category).toBe("social deduction")
+      })
+    })
+  })
+  test("200: should respond with an empty array when passed a category query parameter that exists in the category table but has no associated reviews in the review table", () => {
+    return request(app)
+    .get("/api/reviews?category=children's_games")
+    .expect(200)
+    .then(({body: {reviews}}) => {
+      expect(reviews.length).toBe(0)
+    })
+  })
+  test("200: should respond with an array of objects, sorted by the column defined by the sort_by parameter, in descending order", () => {
     return request(app)
       .get("/api/reviews?sort_by=votes")
       .expect(200)
