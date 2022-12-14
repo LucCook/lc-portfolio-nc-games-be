@@ -85,6 +85,7 @@ describe("GET api/reviews?queries", () => {
       })
     })
   })
+
   test("200: should respond with an empty array when passed a category query parameter that exists in the category table but has no associated reviews in the review table", () => {
     return request(app)
     .get("/api/reviews?category=children's_games")
