@@ -28,10 +28,10 @@ describe("GET api/categories", () => {
   });
 });
 
-describe("GET api/reviews", () => {
+describe.only("GET api/reviews", () => {
   test("200: should respond with an array of objects, each with properties (owner, title, review_id, category, review_img_url, created_at, votes, designer, comment_count)", () => {
     return request(app)
-      .get("/api/reviews")
+      .get("/api/reviews?limit=100")
       .expect(200)
       .then(({ body: { reviews } }) => {
         expect(reviews.length).toBe(13);
@@ -62,10 +62,10 @@ describe("GET api/reviews", () => {
   });
 });
 
-describe("GET api/reviews?queries", () => {
+describe.only("GET api/reviews?queries", () => {
   test("200: should respond with an array of objects, filtered by category value when passed a category query parameter", () => {
     return request(app)
-      .get("/api/reviews?category=social_deduction")
+      .get("/api/reviews?category=social_deduction&limit=100")
       .expect(200)
       .then(({ body: { reviews } }) => {
         expect(reviews.length).toBe(11);
@@ -76,7 +76,7 @@ describe("GET api/reviews?queries", () => {
   });
   test("200: should respond with an array of objects, sorted by the column defined by the sort_by parameter", () => {
     return request(app)
-      .get("/api/reviews?category=social_deduction")
+      .get("/api/reviews?category=social_deduction&limit=100")
       .expect(200)
       .then(({ body: { reviews } }) => {
         expect(reviews.length).toBe(11);
@@ -96,7 +96,7 @@ describe("GET api/reviews?queries", () => {
   });
   test("200: should respond with an array of objects, sorted by the column defined by the sort_by parameter, in descending order", () => {
     return request(app)
-      .get("/api/reviews?sort_by=votes")
+      .get("/api/reviews?sort_by=votes&limit=100")
       .expect(200)
       .then(({ body: { reviews } }) => {
         expect(reviews.length).toBe(13);
@@ -105,7 +105,7 @@ describe("GET api/reviews?queries", () => {
   });
   test("200: should respond with an array of objects, sorted by date, ascending if passed ASC as order parameter", () => {
     return request(app)
-      .get("/api/reviews?order=ASC")
+      .get("/api/reviews?order=ASC&limit=100")
       .expect(200)
       .then(({ body: { reviews } }) => {
         expect(reviews.length).toBe(13);
@@ -114,7 +114,7 @@ describe("GET api/reviews?queries", () => {
   });
   test("200: should respond appropriately when passed a combination of query parameters", () => {
     return request(app)
-      .get("/api/reviews?category=social_deduction&sort_by=votes&order=ASC")
+      .get("/api/reviews?category=social_deduction&sort_by=votes&order=ASC&limit=100")
       .expect(200)
       .then(({ body: { reviews } }) => {
         expect(reviews.length).toBe(11);
@@ -639,4 +639,68 @@ describe('POST /api/reviews', () => {
         expect(msg).toBe("not found");
       });
   });
+});
+
+describe.only('GET /api/reviews Pagination', () => {
+  test("200: responds with an array of objects up to the length specified by limit parameter", () => {
+    return request(app)
+      .get("/api/reviews?limit=3")
+      .expect(200)
+      .then(({body : {reviews}}) => {
+        expect(reviews.length).toBe(3)
+      })
+  })
+  test("200: responds with an array of objects offset by the page * limit", () => {
+    return request(app)
+      .get("/api/reviews?sort_by=review_id&limit=3&p=2&order=asc")
+      .expect(200)
+      .then(({body : {reviews}}) => {
+        expect(reviews[0].review_id).toBe(4)
+      })
+  })
+  test("200: responds with a property of total_count that is total number of results that match criteria, disregarding limit", () => {
+    return request(app)
+      .get("/api/reviews?limit=3")
+      .expect(200)
+      .then(({body : {total_count}}) => {
+        expect(total_count).toBe(13)
+      })
+  })
+  test("200: responds with an empty array if limit is 0", () => {
+    return request(app)
+      .get("/api/reviews?limit=0")
+      .expect(200)
+      .then(({body : {reviews}}) => {
+        expect(reviews).toEqual([])
+      })
+  })
+  test("400: bad request if p is negative", () => {
+    return request(app)
+      .get("/api/reviews?p=-1")
+      .expect(400)
+      .then(({body : {msg}}) => {
+        expect(msg).toBe("bad request")
+      })
+  })
+  test("400: bad request if limit is negative", () => {
+    return request(app)
+      .get("/api/reviews?limit=-1")
+      .expect(400)
+      .then(({body : {msg}}) => {
+        expect(msg).toBe("bad request")
+      })
+  })
+  test("limit defaults to 10", () => {
+    return Promise.all([request(app).get("/api/reviews?p=1"), request(app).get("/api/reviews?limit=10000&p=1")])
+     .then(([{body: {reviews: defaultLimit}}, {body: {reviews: unlimited}}]) => {
+        expect(unlimited.length).toBeGreaterThan(defaultLimit.length)
+        expect(defaultLimit.length).toBe(10)
+      })
+  })
+  test("p defaults to 1", () => {
+    return request(app).get("/api/reviews?sort_by=review_id&order=asc")
+     .then(({body: {reviews}}) => {
+        expect(reviews[0].review_id).toBe(1)
+      })
+  })
 });

@@ -6,18 +6,19 @@ exports.selectReviews = (queries) => {
   let categorySearch = queries.category || "%"
   const orderBy = queries.sort_by || 'created_at'
   const order = queries.order || 'DESC'
+  const limit = queries.limit || 10
+  const p = limit * (queries.p - 1)|| 0
   
   if (order.toUpperCase() !== 'DESC' && order.toUpperCase() !== 'ASC') {
     return Promise.reject({status: 400, msg: 'bad request'})
   }
 
-  const sqlString = format("SELECT owner, title, reviews.review_id, category, review_img_url, reviews.created_at, reviews.votes, designer, COUNT(comments.comment_id)::INT AS comment_count FROM reviews LEFT JOIN comments ON reviews.review_id = comments.review_id WHERE category ILIKE %L GROUP BY reviews.review_id ORDER BY reviews.%I %s", categorySearch, orderBy, order)
-  return db
-    .query(
-      sqlString
-    )
-    .then(({ rows: reviews }) => {
-      return reviews;
+  const sqlStringResults = format("SELECT owner, title, reviews.review_id, category, review_img_url, reviews.created_at, reviews.votes, designer, COUNT(comments.comment_id)::INT AS comment_count FROM reviews LEFT JOIN comments ON reviews.review_id = comments.review_id WHERE category ILIKE %L GROUP BY reviews.review_id ORDER BY reviews.%I %s LIMIT %L OFFSET %L", categorySearch, orderBy, order, limit, p)
+  const sqlStringResultCount = format("SELECT owner, title, reviews.review_id, category, review_img_url, reviews.created_at, reviews.votes, designer, COUNT(comments.comment_id)::INT AS comment_count FROM reviews LEFT JOIN comments ON reviews.review_id = comments.review_id WHERE category ILIKE %L GROUP BY reviews.review_id ORDER BY reviews.%I %s", categorySearch, orderBy, order)
+
+  return Promise.all([db.query(sqlStringResults), db.query(sqlStringResultCount)])
+    .then(([{ rows: reviews }, {rows: totalResults}]) => {
+      return [reviews, totalResults.length];
     });
 };
 

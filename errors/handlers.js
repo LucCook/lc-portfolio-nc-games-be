@@ -15,7 +15,9 @@ exports.handleCustom = (error, req, res, next) => {
 
 exports.handle400 = (error, req, res, next) => {
   
-    if (error.status === 400 
+    if (error.status === 400
+    || error.code === '2201W'
+    || error.code === "2201X" 
     || error.code === "22P02"
     || error.code === "23502"
     || error.code === "42703") {
