@@ -14,12 +14,12 @@ exports.handleCustom = (error, req, res, next) => {
 };
 
 exports.handle400 = (error, req, res, next) => {
-  console.log(error.code)
+  
     if (error.status === 400 
     || error.code === "22P02"
     || error.code === "23502"
     || error.code === "42703") {
-      // console.log(error)
+      
         res.status(400).send({msg: "bad request"})
     } else if (error.code === "23503") {
       res.status(404).send({msg : "not found"})
