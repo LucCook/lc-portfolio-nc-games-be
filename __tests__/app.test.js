@@ -3,7 +3,7 @@ const seed = require("../db/seeds/seed.js");
 const request = require("supertest");
 const db = require("../db/connection.js");
 const testData = require("../db/data/test-data/index.js");
-const fs = require('fs/promises')
+const fs = require("fs/promises");
 
 afterAll(() => db.end());
 
@@ -65,7 +65,6 @@ describe("GET api/reviews", () => {
 describe("GET api/reviews?queries", () => {
   test("200: should respond with an array of objects, filtered by category value when passed a category query parameter", () => {
     return request(app)
-
       .get("/api/reviews?category=social_deduction")
       .expect(200)
       .then(({ body: { reviews } }) => {
@@ -77,24 +76,24 @@ describe("GET api/reviews?queries", () => {
   });
   test("200: should respond with an array of objects, sorted by the column defined by the sort_by parameter", () => {
     return request(app)
-    .get("/api/reviews?category=social_deduction")
-    .expect(200)
-    .then(({body: {reviews}}) => {
-      expect(reviews.length).toBe(11)
-      reviews.forEach((review) => {
-        expect(review.category).toBe("social deduction")
-      })
-    })
-  })
+      .get("/api/reviews?category=social_deduction")
+      .expect(200)
+      .then(({ body: { reviews } }) => {
+        expect(reviews.length).toBe(11);
+        reviews.forEach((review) => {
+          expect(review.category).toBe("social deduction");
+        });
+      });
+  });
 
   test("200: should respond with an empty array when passed a category query parameter that exists in the category table but has no associated reviews in the review table", () => {
     return request(app)
-    .get("/api/reviews?category=children's_games")
-    .expect(200)
-    .then(({body: {reviews}}) => {
-      expect(reviews.length).toBe(0)
-    })
-  })
+      .get("/api/reviews?category=children's_games")
+      .expect(200)
+      .then(({ body: { reviews } }) => {
+        expect(reviews.length).toBe(0);
+      });
+  });
   test("200: should respond with an array of objects, sorted by the column defined by the sort_by parameter, in descending order", () => {
     return request(app)
       .get("/api/reviews?sort_by=votes")
@@ -203,7 +202,7 @@ describe("GET /api/reviews/:review_id - with comment_count", () => {
 });
 
 describe("GET /api/reviews/:review_id/comments", () => {
-  test.only("200: should return an array of objects, each with properties (comment_id, votes, created_at, author, body, review_id)", () => {
+  test("200: should return an array of objects, each with properties (comment_id, votes, created_at, author, body, review_id)", () => {
     return request(app)
       .get("/api/reviews/2/comments")
       .expect(200)
@@ -437,7 +436,7 @@ describe("DELETE /api/comments/:comment_id", () => {
     return request(app)
       .delete("/api/comments/1002")
       .expect(404)
-      .then(({ body : {msg}}) => {
+      .then(({ body: { msg } }) => {
         expect(msg).toBe("not found");
       });
   });
@@ -445,20 +444,28 @@ describe("DELETE /api/comments/:comment_id", () => {
     return request(app)
       .delete("/api/comments/pineapple")
       .expect(400)
-      .then(({ body : {msg}}) => {
+      .then(({ body: { msg } }) => {
         expect(msg).toBe("bad request");
       });
   });
 });
 
-describe('GET /api', () => {
+describe("GET /api", () => {
   test("200: should respond with a JSON object of available endpoints", () => {
-    return Promise.all([fs.readFile(`${__dirname}/../endpoints.json`, 'utf8'), request(app).get("/api").expect(200)])
-    .then(([jsonFile, {body: {API}}]) => {
-      
-      expect(API).toEqual(JSON.parse(jsonFile))
-    })
-  })
+    return Promise.all([
+      fs.readFile(`${__dirname}/../endpoints.json`, "utf8"),
+      request(app).get("/api").expect(200),
+    ]).then(
+      ([
+        jsonFile,
+        {
+          body: { API },
+        },
+      ]) => {
+        expect(API).toEqual(JSON.parse(jsonFile));
+      }
+    );
+  });
 });
 
 describe("request invalid path", () => {

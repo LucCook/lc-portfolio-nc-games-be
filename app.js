@@ -1,12 +1,6 @@
 const express = require("express");
 
 const {
-  getCommentsByReviewId,
-  postCommentByReviewId,
-  deleteComment,
-} = require("./controllers/comments.controllers");
-
-const {
   handle500,
   handle404,
   handleCustom,
@@ -16,14 +10,9 @@ const apiRouter = require("./routes/api-router");
 
 const app = express();
 
-
 app.use(express.json());
 
-app.use('/api', apiRouter)
-// app.get("/api/reviews/:review_id/comments", getCommentsByReviewId);
-// app.post("/api/reviews/:review_id/comments", postCommentByReviewId);
-
-// app.delete("/api/comments/:comment_id", deleteComment)
+app.use("/api", apiRouter);
 
 app.all("*", handle404);
 
