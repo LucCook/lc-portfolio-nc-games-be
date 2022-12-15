@@ -607,4 +607,36 @@ describe('POST /api/reviews', () => {
         expect(msg).toBe("bad request");
       });
   });
+  test("404: not found if username does not exist on users table", () => {
+    const newReview = {
+      owner: "this is a fake name",
+      title: "this is a title",
+      review_body: "this is a review body",
+      designer: "this is a designer",
+      category: "euro game"
+    };
+    return request(app)
+      .post("/api/reviews")
+      .send(newReview)
+      .expect(404)
+      .then(({ body: { msg } }) => {
+        expect(msg).toBe("not found");
+      });
+  });
+  test("404: not found if category does not exist on categories table", () => {
+    const newReview = {
+      owner: "mallionaire",
+      title: "this is a title",
+      review_body: "this is a review body",
+      designer: "this is a designer",
+      category: "this is a fake category"
+    };
+    return request(app)
+      .post("/api/reviews")
+      .send(newReview)
+      .expect(404)
+      .then(({ body: { msg } }) => {
+        expect(msg).toBe("not found");
+      });
+  });
 });

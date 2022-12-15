@@ -36,7 +36,6 @@ exports.patchReview = (req, res, next) => {
 exports.postReview = (req, res, next) => {
   insertReview(req.body)
   .then((review) => {
-    console.log(review)
     res.status(201).send({review})
   }).catch(next)
 }
