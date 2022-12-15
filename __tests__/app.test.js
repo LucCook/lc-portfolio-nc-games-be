@@ -470,3 +470,35 @@ describe("request invalid path", () => {
       });
   });
 });
+
+
+describe.only('GET /api/users/:username', () => {
+  test("200: should respond with a user object matching username parameter", () => {
+    return request(app)
+      .get("/api/users/mallionaire")
+      .expect(200)
+      .then(({body : {user}}) => {
+        expect(user).toEqual(expect.objectContaining({
+          name: 'haz',
+          username: 'mallionaire',
+          avatar_url: 'https://www.healthytherapies.com/wp-content/uploads/2016/06/Lime3.jpg'
+        }))
+      })
+  })
+  test("404: not found when username does not exist in users table", () => {
+    return request(app)
+      .get("/api/users/fakename")
+      .expect(404)
+      .then(({body: {msg}}) => {
+        expect(msg).toBe("not found")
+      })
+  })
+  test("400: bad request when username is attempted SQL injection", () => {
+    return request(app)
+      .get("/api/users/%;DROP TABLE users")
+      .expect(400)
+      .then(({body: {msg}}) => {
+        expect(msg).toBe("bad request")
+      })
+  })
+});

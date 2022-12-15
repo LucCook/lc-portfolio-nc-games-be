@@ -14,7 +14,9 @@ exports.handleCustom = (error, req, res, next) => {
 };
 
 exports.handle400 = (error, req, res, next) => {
-    if (error.code === "22P02"
+  console.log(error.code)
+    if (error.status === 400 
+    || error.code === "22P02"
     || error.code === "23502"
     || error.code === "42703") {
         res.status(400).send({msg: "bad request"})
