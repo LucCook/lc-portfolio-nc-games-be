@@ -3,7 +3,18 @@ const { checkValueExists } = require("../models/utility.models");
 
 
 exports.getCommentsByReviewId = (req, res, next) => {
-  Promise.all([selectCommentsByReviewId(req.params.review_id), checkValueExists('reviews', 'review_id', parseInt(req.params.review_id))
+  console.log(Object.keys(req))
+  console.log(req.params)
+  console.log(req.baseUrl + '<< base url')
+  console.log(req.originalUrl + '<< OG url')
+  console.log(req.url + '<< url')
+  
+  
+  // console.log(req.baseUrl.split('/')[3])
+  
+  // Promise.all([selectCommentsByReviewId(req.params.review_id), checkValueExists('reviews', 'review_id', parseInt(req.params.review_id))
+  // ])
+  Promise.all([selectCommentsByReviewId(req.baseUrl.split('/')[3]), checkValueExists('reviews', 'review_id', parseInt(req.baseUrl.split('/')[3]))
   ])
   
     .then(([comments]) => {
@@ -13,7 +24,9 @@ exports.getCommentsByReviewId = (req, res, next) => {
 };
 
 exports.postCommentByReviewId = (req, res, next) => {
-    insertCommentByReviewId(req.body, req.params.review_id).then((comment) => {
+    // insertCommentByReviewId(req.body, req.params.review_id)
+    insertCommentByReviewId(req.body, req.baseUrl.split('/')[3])
+    .then((comment) => {
         res.status(201).send({comment})
     }).catch(next)
 }

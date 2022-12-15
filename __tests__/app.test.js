@@ -203,7 +203,7 @@ describe("GET /api/reviews/:review_id - with comment_count", () => {
 });
 
 describe("GET /api/reviews/:review_id/comments", () => {
-  test("200: should return an array of objects, each with properties (comment_id, votes, created_at, author, body, review_id)", () => {
+  test.only("200: should return an array of objects, each with properties (comment_id, votes, created_at, author, body, review_id)", () => {
     return request(app)
       .get("/api/reviews/2/comments")
       .expect(200)
@@ -453,9 +453,10 @@ describe("DELETE /api/comments/:comment_id", () => {
 
 describe('GET /api', () => {
   test("200: should respond with a JSON object of available endpoints", () => {
-    return Promise.all([fs.readFile(`${__dirname}/../endpoints.json`), request(app).get("/api").expect(200)])
-    .then(([jsonFile, {body : jsonResponse}]) => {
-      expect(jsonFile).toEqual(jsonResponse)
+    return Promise.all([fs.readFile(`${__dirname}/../endpoints.json`, 'utf8'), request(app).get("/api").expect(200)])
+    .then(([jsonFile, {body: {API}}]) => {
+      
+      expect(API).toEqual(JSON.parse(jsonFile))
     })
   })
 });
