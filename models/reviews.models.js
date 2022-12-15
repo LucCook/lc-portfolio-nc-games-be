@@ -44,11 +44,3 @@ exports.updateReview = (patchData, reviewId) => {
       } else return review;
     });
 };
-
-exports.insertReview = (newReview) => {
-  const newReviewData = [newReview.owner, newReview.title, newReview.review_body, newReview.designer, newReview.category]
-  return db.query("INSERT INTO reviews (owner, title, review_body, designer, category) VALUES ($1, $2, $3, $4, $5) RETURNING *, 0 AS comment_count", newReviewData)
-  .then(({ rows : [review]}) => {
-    return review
-  })
-}
