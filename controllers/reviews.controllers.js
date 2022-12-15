@@ -2,7 +2,6 @@ const {
   selectReviews,
   selectReviewById,
   updateReview,
-  insertReview,
 } = require("../models/reviews.models");
 const { checkValueExists } = require("../models/utility.models");
 
