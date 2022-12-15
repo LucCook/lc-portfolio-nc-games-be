@@ -12,8 +12,8 @@ exports.getReviews = (req, res, next) => {
     if (req.query.category) {
       promises.push(checkValueExists('categories', 'slug', req.query.category))
     }
-    Promise.all(promises).then(([reviews]) => {
-        res.status(200).send({reviews})
+    Promise.all(promises).then(([[reviews, total_count]]) => {
+        res.status(200).send({total_count, reviews})
     }).catch(next)
 }
 
