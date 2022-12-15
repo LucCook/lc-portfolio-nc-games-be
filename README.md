@@ -6,15 +6,15 @@ https://lc-portfolio-nc-games.onrender.com/api/
 
 ## Project Summary
 
+This API was one of my end of module projects for Northcoders, which demonstrates my ability to utilise PSQL and Javascript to host a queriable database web service. 
 
+Navigate to the endpoint /api to get a list of all currently functioning endpoints, all of which have been extensively tested using Jest and internal code reviews.
 
 ## Setup instructions
 
 Start by cloning this repo - instructions here - https://docs.github.com/en/repositories/creating-and-managing-repositories/cloning-a-repository
 
 After opening the repo in your terminal, start by running 'npm install' or follow the links below for the required packages
-
-
 
 ## .env file setup
 
