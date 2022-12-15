@@ -127,5 +127,20 @@
   "DELETE /api/comments/:comment_id": {
     "description": "deletes a single comment by comment_id, and serves nothing if succesful",
     "queries": []
+  },
+  "PATCH /api/comments/:comment_id": {
+    "description": "increments the vote count of a comment by the specified amount, and serves the updated comment",
+    "requiredFields": ["inc_votes"],
+    "exampleRequest": { "inc_votes": -50 },
+    "exampleResponse": {
+      "comment": {
+        "comment_id": 2,
+        "body": "My dog loved this game too!",
+        "review_id": 4,
+        "author": "tickle122",
+        "votes": -47,
+        "created_at": "2021-01-18T10:09:05.410Z"
+      }
+    }
   }
 }
