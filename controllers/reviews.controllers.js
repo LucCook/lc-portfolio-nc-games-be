@@ -2,6 +2,7 @@ const {
   selectReviews,
   selectReviewById,
   updateReview,
+  insertReview,
 } = require("../models/reviews.models");
 const { checkValueExists } = require("../models/utility.models");
 
@@ -31,3 +32,11 @@ exports.patchReview = (req, res, next) => {
     })
     .catch(next);
 };
+
+exports.postReview = (req, res, next) => {
+  insertReview(req.body)
+  .then((review) => {
+    console.log(review)
+    res.status(201).send({review})
+  }).catch(next)
+}
