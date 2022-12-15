@@ -28,7 +28,7 @@ describe("GET api/categories", () => {
   });
 });
 
-describe.only("GET api/reviews", () => {
+describe("GET api/reviews", () => {
   test("200: should respond with an array of objects, each with properties (owner, title, review_id, category, review_img_url, created_at, votes, designer, comment_count)", () => {
     return request(app)
       .get("/api/reviews?limit=100")
@@ -62,7 +62,7 @@ describe.only("GET api/reviews", () => {
   });
 });
 
-describe.only("GET api/reviews?queries", () => {
+describe("GET api/reviews?queries", () => {
   test("200: should respond with an array of objects, filtered by category value when passed a category query parameter", () => {
     return request(app)
       .get("/api/reviews?category=social_deduction&limit=100")
@@ -641,7 +641,7 @@ describe('POST /api/reviews', () => {
   });
 });
 
-describe.only('GET /api/reviews Pagination', () => {
+describe('GET /api/reviews Pagination', () => {
   test("200: responds with an array of objects up to the length specified by limit parameter", () => {
     return request(app)
       .get("/api/reviews?limit=3")
@@ -685,6 +685,14 @@ describe.only('GET /api/reviews Pagination', () => {
   test("400: bad request if limit is negative", () => {
     return request(app)
       .get("/api/reviews?limit=-1")
+      .expect(400)
+      .then(({body : {msg}}) => {
+        expect(msg).toBe("bad request")
+      })
+  })
+  test("400: bad request if limit is wrong data type", () => {
+    return request(app)
+      .get("/api/reviews?limit=sadjnasdjk")
       .expect(400)
       .then(({body : {msg}}) => {
         expect(msg).toBe("bad request")

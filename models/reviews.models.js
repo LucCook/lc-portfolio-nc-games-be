@@ -14,7 +14,7 @@ exports.selectReviews = (queries) => {
   }
 
   const sqlStringResults = format("SELECT owner, title, reviews.review_id, category, review_img_url, reviews.created_at, reviews.votes, designer, COUNT(comments.comment_id)::INT AS comment_count FROM reviews LEFT JOIN comments ON reviews.review_id = comments.review_id WHERE category ILIKE %L GROUP BY reviews.review_id ORDER BY reviews.%I %s LIMIT %L OFFSET %L", categorySearch, orderBy, order, limit, p)
-  const sqlStringResultCount = format("SELECT owner, title, reviews.review_id, category, review_img_url, reviews.created_at, reviews.votes, designer, COUNT(comments.comment_id)::INT AS comment_count FROM reviews LEFT JOIN comments ON reviews.review_id = comments.review_id WHERE category ILIKE %L GROUP BY reviews.review_id ORDER BY reviews.%I %s", categorySearch, orderBy, order)
+  const sqlStringResultCount = format("SELECT review_id FROM reviews WHERE category ILIKE %L", categorySearch)
 
   return Promise.all([db.query(sqlStringResults), db.query(sqlStringResultCount)])
     .then(([{ rows: reviews }, {rows: totalResults}]) => {
