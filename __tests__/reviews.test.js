@@ -107,6 +107,19 @@ describe("GET api/reviews?queries", () => {
         });
       });
   });
+  test("200: should respond with a single review if review_id query parameter is not undefined", () => {
+    return request(app)
+      .get(
+        "/api/reviews?review_id=1"
+      )
+      .expect(200)
+      .then(({ body: { reviews } }) => {
+        expect(reviews.length).toBeGreaterThan(0);
+         reviews.forEach((review) => {
+          expect(review.review_id).toBe(1)
+        });
+      });
+  });
   test("400: bad request if sort_by parameter is not a column", () => {
     return request(app)
       .get("/api/reviews?sort_by=most_number_of_pieces")
