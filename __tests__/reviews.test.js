@@ -425,3 +425,30 @@ describe("GET /api/reviews Pagination", () => {
       });
   });
 });
+
+describe('DELETE /api/reviews/:review_id', () => {
+  test("204: returns nothing when deletion succesful", () => {
+    return request(app)
+      .delete("/api/reviews/1")
+      .expect(204)
+      .then(({body}) => {
+        expect(body).toEqual({})
+      })
+  })
+  test("404: not found when review_id does not exist in reviews table", () => {
+    return request(app)
+      .delete("/api/reviews/1002")
+      .expect(404)
+      .then(({ body: { msg } }) => {
+        expect(msg).toBe("not found");
+      });
+  });
+  test("400: bad request when review_id is wrong data-type", () => {
+    return request(app)
+      .delete("/api/reviews/pineapple")
+      .expect(400)
+      .then(({ body: { msg } }) => {
+        expect(msg).toBe("bad request");
+      });
+  });
+});

@@ -53,3 +53,11 @@ exports.insertReview = (newReview) => {
     return review
   })
 }
+
+exports.removeReview = (reviewId) => {
+  return db.query("DELETE FROM reviews WHERE review_id = $1 RETURNING *", [reviewId]).then(({rows : [review]}) => {
+    if (!review) {
+      return Promise.reject({status: 404, msg: "not found"})
+    }
+  })
+}

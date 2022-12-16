@@ -2,7 +2,8 @@ const {
   selectReviews,
   selectReviewById,
   updateReview,
-  insertReview
+  insertReview,
+  removeReview
 } = require("../models/reviews.models");
 const { checkValueExists } = require("../models/utility.models");
 
@@ -37,5 +38,11 @@ exports.postReview = (req, res, next) => {
   insertReview(req.body)
   .then((review) => {
     res.status(201).send({review})
+  }).catch(next)
+}
+
+exports.deleteReview = (req, res, next) => {
+  removeReview(req.params.review_id).then(() => {
+    res.status(204).send({})
   }).catch(next)
 }
