@@ -712,3 +712,54 @@ describe('GET /api/reviews Pagination', () => {
       })
   })
 });
+
+describe('GET /api/reviews/:review_id/comments - pagination', () => {
+  test("200: responds with an array of objects up to the length specified by limit parameter", () => {
+    return request(app)
+      .get("/api/reviews/2/comments?limit=1")
+      .expect(200)
+      .then(({body : {comments}}) => {
+        expect(comments.length).toBe(1)
+      })
+  })
+  test("200: responds with a property of total_count that is total number of results that match criteria, disregarding limit", () => {
+    return request(app)
+      .get("/api/reviews/2/comments?limit=1")
+      .expect(200)
+      .then(({body : {total_count}}) => {
+        expect(total_count).toBe(3)
+      })
+  })
+  test("200: responds with an empty array if limit is 0", () => {
+    return request(app)
+      .get("/api/reviews/2/comments?limit=0")
+      .expect(200)
+      .then(({body : {comments}}) => {
+        expect(comments).toEqual([])
+      })
+  })
+  test("400: bad request if p is negative", () => {
+    return request(app)
+      .get("/api/reviews/2/comments?p=-1")
+      .expect(400)
+      .then(({body : {msg}}) => {
+        expect(msg).toBe("bad request")
+      })
+  })
+  test("400: bad request if limit is negative", () => {
+    return request(app)
+      .get("/api/reviews/2/comments?limit=-1")
+      .expect(400)
+      .then(({body : {msg}}) => {
+        expect(msg).toBe("bad request")
+      })
+  })
+  test("400: bad request if limit is wrong data type", () => {
+    return request(app)
+      .get("/api/reviews/2/comments?limit=sadjnasdjk")
+      .expect(400)
+      .then(({body : {msg}}) => {
+        expect(msg).toBe("bad request")
+      })
+  })
+});

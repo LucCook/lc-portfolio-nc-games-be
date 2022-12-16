@@ -8,12 +8,12 @@ const { checkValueExists } = require("../models/utility.models");
 
 exports.getCommentsByReviewId = (req, res, next) => {
   Promise.all([
-    selectCommentsByReviewId(req.params.review_id),
+    selectCommentsByReviewId(req.params.review_id, req.query),
     checkValueExists("reviews", "review_id", parseInt(req.params.review_id)),
   ])
 
-    .then(([comments]) => {
-      res.status(200).send({ comments });
+    .then(([[comments, total_count]]) => {
+      res.status(200).send({ total_count, comments });
     })
     .catch(next);
 };
