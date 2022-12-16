@@ -227,6 +227,94 @@ describe("PATCH /api/reviews/:review_id", () => {
         );
       });
   });
+  test("200: returns updated review if patch succesful (alter review body)", () => {
+    const voteUpdate = { review_body: "new body who dis?" };
+    return request(app)
+      .patch("/api/reviews/1")
+      .send(voteUpdate)
+      .expect(200)
+      .then(({ body: { review } }) => {
+        expect(review).toEqual(
+          expect.objectContaining({
+            title: expect.any(String),
+            votes: 1,
+            designer: expect.any(String),
+            review_id: 1,
+            created_at: expect.any(String),
+            review_img_url: expect.any(String),
+            category: expect.any(String),
+            review_body: "new body who dis?",
+          })
+        );
+      });
+  });
+  test("200: returns updated review if patch succesful (alter review img url)", () => {
+    const voteUpdate = { review_img_url: "new url who dis?" };
+    return request(app)
+      .patch("/api/reviews/1")
+      .send(voteUpdate)
+      .expect(200)
+      .then(({ body: { review } }) => {
+        expect(review).toEqual(
+          expect.objectContaining({
+            title: expect.any(String),
+            votes: 1,
+            designer: expect.any(String),
+            review_id: 1,
+            created_at: expect.any(String),
+            review_img_url: "new url who dis?",
+            category: expect.any(String),
+            review_body: expect.any(String),
+          })
+        );
+      });
+  });
+  test("200: returns updated review if patch succesful (multiple properites)", () => {
+    const voteUpdate = {
+      inc_votes: 100,
+      review_body: "new body who dis?",
+      review_img_url: "new url who dis?",
+    };
+    return request(app)
+      .patch("/api/reviews/1")
+      .send(voteUpdate)
+      .expect(200)
+      .then(({ body: { review } }) => {
+        expect(review).toEqual(
+          expect.objectContaining({
+            title: expect.any(String),
+            votes: 101,
+            designer: expect.any(String),
+            review_id: 1,
+            created_at: expect.any(String),
+            review_img_url: "new url who dis?",
+            category: expect.any(String),
+            review_body: "new body who dis?",
+          })
+        );
+      });
+  });
+  test("200: returns original review if inc_votes is missing from the body", () => {
+    const voteUpdate = {};
+    return request(app)
+      .patch("/api/reviews/1")
+      .send(voteUpdate)
+      .expect(200)
+      .then(({ body: { review } }) => {
+        expect(review).toEqual(
+          expect.objectContaining({
+            title: expect.any(String),
+            votes: 1,
+            designer: expect.any(String),
+            review_id: 1,
+            created_at: expect.any(String),
+            review_img_url: expect.any(String),
+            category: expect.any(String),
+            review_body: expect.any(String),
+          })
+        );
+      });
+  });
   test("400: bad request if inc_votes is wrong data type", () => {
     const voteUpdate = { inc_votes: "pineapple" };
     return request(app)
@@ -237,16 +325,7 @@ describe("PATCH /api/reviews/:review_id", () => {
         expect(msg).toBe("bad request");
       });
   });
-  test("400: bad request if inc_votes is missing from body", () => {
-    const voteUpdate = {};
-    return request(app)
-      .patch("/api/reviews/1")
-      .send(voteUpdate)
-      .expect(400)
-      .then(({ body: { msg } }) => {
-        expect(msg).toBe("bad request");
-      });
-  });
+
   test("400: bad request if review_id is wrong data type", () => {
     const voteUpdate = { inc_votes: -100 };
     return request(app)
@@ -426,15 +505,15 @@ describe("GET /api/reviews Pagination", () => {
   });
 });
 
-describe('DELETE /api/reviews/:review_id', () => {
+describe("DELETE /api/reviews/:review_id", () => {
   test("204: returns nothing when deletion succesful", () => {
     return request(app)
       .delete("/api/reviews/1")
       .expect(204)
-      .then(({body}) => {
-        expect(body).toEqual({})
-      })
-  })
+      .then(({ body }) => {
+        expect(body).toEqual({});
+      });
+  });
   test("404: not found when review_id does not exist in reviews table", () => {
     return request(app)
       .delete("/api/reviews/1002")

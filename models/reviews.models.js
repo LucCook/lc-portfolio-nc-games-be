@@ -33,11 +33,16 @@ exports.selectReviewById = (reviewId) => {
 };
 
 exports.updateReview = (patchData, reviewId) => {
-  const { inc_votes } = patchData;
+  const { inc_votes, review_body, review_img_url} = patchData;
   return db
     .query(
-      "UPDATE reviews SET votes = votes + $1 WHERE review_id = $2 RETURNING *",
-      [inc_votes, reviewId]
+      `UPDATE reviews SET 
+      votes = votes + COALESCE($1, 0),
+      review_body = COALESCE($2, review_body),
+      review_img_url = COALESCE($3, review_img_url)
+      WHERE review_id = $4 
+      RETURNING *`,
+      [inc_votes, review_body, review_img_url, reviewId]
     )
     .then(({ rows: [review] }) => {
       if (review === undefined) {
