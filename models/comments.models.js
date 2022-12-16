@@ -48,14 +48,19 @@ exports.removeComment = (commentId) => {
 
 exports.updateComment = (patchData, commentId) => {
   const { inc_votes, body } = patchData
+  let edited
+  if (body) {
+    edited = true
+  }
   return db
     .query(
       `UPDATE comments SET 
       votes = votes + COALESCE($1, 0),
-      body = COALESCE($2, body) 
-      WHERE comment_id = $3
+      body = COALESCE($2, body),
+      edited = COALESCE(edited, $3)
+      WHERE comment_id = $4
       RETURNING *`,
-      [inc_votes, body, commentId]
+      [inc_votes, body, edited, commentId]
     )
     .then(({ rows: [comment] }) => {
       if (!comment) {
