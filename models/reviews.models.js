@@ -33,11 +33,16 @@ exports.selectReviewById = (reviewId) => {
 };
 
 exports.updateReview = (patchData, reviewId) => {
-  const { inc_votes } = patchData;
+  const { inc_votes, review_body, review_img_url} = patchData;
   return db
     .query(
-      "UPDATE reviews SET votes = votes + $1 WHERE review_id = $2 RETURNING *",
-      [inc_votes, reviewId]
+      `UPDATE reviews SET 
+      votes = votes + COALESCE($1, 0),
+      review_body = COALESCE($2, review_body),
+      review_img_url = COALESCE($3, review_img_url)
+      WHERE review_id = $4 
+      RETURNING *`,
+      [inc_votes, review_body, review_img_url, reviewId]
     )
     .then(({ rows: [review] }) => {
       if (review === undefined) {
@@ -51,5 +56,13 @@ exports.insertReview = (newReview) => {
   return db.query("INSERT INTO reviews (owner, title, review_body, designer, category) VALUES ($1, $2, $3, $4, $5) RETURNING *, 0 AS comment_count", newReviewData)
   .then(({ rows : [review]}) => {
     return review
+  })
+}
+
+exports.removeReview = (reviewId) => {
+  return db.query("DELETE FROM reviews WHERE review_id = $1 RETURNING *", [reviewId]).then(({rows : [review]}) => {
+    if (!review) {
+      return Promise.reject({status: 404, msg: "not found"})
+    }
   })
 }
