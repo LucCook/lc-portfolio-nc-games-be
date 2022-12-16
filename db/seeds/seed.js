@@ -48,7 +48,8 @@ const seed = async (data) => {
     review_id INT REFERENCES reviews(review_id) NOT NULL,
     author VARCHAR REFERENCES users(username) NOT NULL,
     votes INT DEFAULT 0 NOT NULL,
-    created_at TIMESTAMP DEFAULT NOW()
+    created_at TIMESTAMP DEFAULT NOW(),
+	edited BOOLEAN DEFAULT NULL
   );`);
 
 	const insertCategoriesQueryStr = format(
