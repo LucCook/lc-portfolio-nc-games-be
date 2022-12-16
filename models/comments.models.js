@@ -56,8 +56,8 @@ exports.updateComment = (patchData, commentId) => {
     .query(
       `UPDATE comments SET 
       votes = votes + COALESCE($1, 0),
-      body = COALESCE($2, body),
-      edited = COALESCE(edited, $3)
+      edited = CASE WHEN body <> $2 THEN COALESCE(edited, $3) ELSE edited END,
+      body = CASE WHEN body <> $2 THEN COALESCE($2, body) ELSE body END
       WHERE comment_id = $4
       RETURNING *`,
       [inc_votes, body, edited, commentId]
