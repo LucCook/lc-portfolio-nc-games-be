@@ -172,18 +172,63 @@ describe("PATCH /api/comments/:comment_id", () => {
         );
       });
   });
-  test("400: bad request if inc_votes is wrong data type", () => {
-    const voteUpdate = { inc_votes: "pineapple" };
+  test("200: should alter the comment body and return the updated comment", () => {
+    return request(app)
+      .patch("/api/comments/1")
+      .send({ body: "new body who dis?" })
+      .expect(200)
+      .then(({ body: { comment } }) => {
+        expect(comment).toEqual(
+          expect.objectContaining({
+            votes: 16,
+            comment_id: 1,
+            body: "new body who dis?",
+            author: "bainesface",
+            review_id: 2,
+            created_at: "2017-11-22T12:43:33.389Z",
+          })
+        );
+      });
+  });
+  test("200: should alter both the comment body and votes, then return the updated comment", () => {
+    return request(app)
+      .patch("/api/comments/1")
+      .send({ body: "new body who dis?", inc_votes: 50 })
+      .expect(200)
+      .then(({ body: { comment } }) => {
+        expect(comment).toEqual(
+          expect.objectContaining({
+            votes: 66,
+            comment_id: 1,
+            body: "new body who dis?",
+            author: "bainesface",
+            review_id: 2,
+            created_at: "2017-11-22T12:43:33.389Z",
+          })
+        );
+      });
+  });
+  test("200: returns unmodified object if no properties on request body", () => {
+    const voteUpdate = {};
     return request(app)
       .patch("/api/comments/1")
       .send(voteUpdate)
-      .expect(400)
-      .then(({ body: { msg } }) => {
-        expect(msg).toBe("bad request");
+      .expect(200)
+      .then(({ body: { comment } }) => {
+        expect(comment).toEqual(
+          expect.objectContaining({
+            votes: 16,
+            comment_id: 1,
+            body: "I loved this game too!",
+            author: "bainesface",
+            review_id: 2,
+            created_at: "2017-11-22T12:43:33.389Z",
+          })
+        );
       });
   });
-  test("400: bad request if inc_votes is missing from body", () => {
-    const voteUpdate = {};
+  test("400: bad request if inc_votes is wrong data type", () => {
+    const voteUpdate = { inc_votes: "pineapple" };
     return request(app)
       .patch("/api/comments/1")
       .send(voteUpdate)
