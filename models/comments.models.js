@@ -51,8 +51,7 @@ exports.updateComment = (patchData, commentId) => {
   let edited
   if (body) {
     edited = true
-  }
-  return db
+    return db
     .query(
       `UPDATE comments SET 
       votes = votes + COALESCE($1, 0),
@@ -69,4 +68,22 @@ exports.updateComment = (patchData, commentId) => {
         return comment;
       }
     });
+  } else {
+
+    return db
+      .query(
+        `UPDATE comments SET 
+        votes = votes + COALESCE($1, 0),
+        WHERE comment_id = $2
+        RETURNING *`,
+        [inc_votes, commentId]
+      )
+      .then(({ rows: [comment] }) => {
+        if (!comment) {
+          return Promise.reject({ status: 404, msg: "not found" });
+        } else {
+          return comment;
+        }
+      });
+  }
 };
