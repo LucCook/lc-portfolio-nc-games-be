@@ -51,39 +51,22 @@ exports.updateComment = (patchData, commentId) => {
   let edited
   if (body) {
     edited = true
-    return db
-    .query(
-      `UPDATE comments SET 
-      votes = votes + COALESCE($1, 0),
-      edited = CASE WHEN body <> $2 THEN COALESCE(edited, $3) ELSE edited END,
-      body = CASE WHEN body <> $2 THEN COALESCE($2, body) ELSE body END
-      WHERE comment_id = $4
-      RETURNING *`,
-      [inc_votes, body, edited, commentId]
-    )
-    .then(({ rows: [comment] }) => {
-      if (!comment) {
-        return Promise.reject({ status: 404, msg: "not found" });
-      } else {
-        return comment;
-      }
-    });
-  } else {
-
-    return db
-      .query(
-        `UPDATE comments SET 
-        votes = votes + COALESCE($1, 0),
-        WHERE comment_id = $2
-        RETURNING *`,
-        [inc_votes, commentId]
-      )
-      .then(({ rows: [comment] }) => {
-        if (!comment) {
-          return Promise.reject({ status: 404, msg: "not found" });
-        } else {
-          return comment;
-        }
-      });
-  }
+  } 
+  return db
+  .query(
+    `UPDATE comments SET 
+    votes = votes + COALESCE($1, 0),
+    edited = CASE WHEN body <> $2 THEN COALESCE(edited, $3) ELSE edited END,
+    body = CASE WHEN body <> $2 THEN COALESCE($2, body) ELSE body END
+    WHERE comment_id = $4
+    RETURNING *`,
+    [inc_votes, body, edited, commentId]
+  )
+  .then(({ rows: [comment] }) => {
+    if (!comment) {
+      return Promise.reject({ status: 404, msg: "not found" });
+    } else {
+      return comment;
+    }
+  });
 };
