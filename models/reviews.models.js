@@ -38,7 +38,7 @@ exports.selectReviews = (queries) => {
   WHERE (category ILIKE $1 OR $1 IS NULL)
   AND (reviews.review_id = $2 OR $2 IS NULL)
   GROUP BY reviews.review_id
-  ORDER BY reviews.${sort_by} ${order}
+  ORDER BY ${sort_by} ${order}
   LIMIT $3
   OFFSET $4`;
 
