@@ -2,6 +2,7 @@ const db = require("../db/connection.js");
 
 exports.selectReviews = (queries) => {
   const {
+    owner,
     category,
     sort_by = "created_at",
     order = "DESC",
@@ -36,6 +37,7 @@ exports.selectReviews = (queries) => {
   FROM reviews
   LEFT JOIN comments ON reviews.review_id = comments.review_id
   WHERE (category ILIKE $1 OR $1 IS NULL)
+  AND (reviews.owner = $5 OR $5 IS NULL)
   AND (reviews.review_id = $2 OR $2 IS NULL)
   GROUP BY reviews.review_id
   ORDER BY ${sort_by} ${order}
@@ -47,7 +49,7 @@ exports.selectReviews = (queries) => {
   AND (review_id = $2 OR $2 IS NULL)`;
 
   return Promise.all([
-    db.query(sqlStringResultsNoFormat, [category, review_id, limit, offset]),
+    db.query(sqlStringResultsNoFormat, [category, review_id, limit, offset, owner]),
     db.query(sqlStringResultCountNoFormat, [category, review_id]),
   ]).then(
     ([

@@ -10,6 +10,9 @@ const { checkValueExists } = require("../models/utility.models");
 exports.getReviews = (req, res, next) => {
     
     const promises = [selectReviews(req.query)]
+    if (req.query.author) {
+      promises.push(checkValueExists('users', 'username', req.query.author))
+    }
     if (req.query.category) {
       promises.push(checkValueExists('categories', 'slug', req.query.category))
     }
