@@ -6,7 +6,7 @@ exports.selectCommentsByReviewId = (reviewId, queries) => {
 
   const resultsPromise = db
   .query(
-    "SELECT comment_id, votes, created_at, author, body, review_id FROM comments WHERE review_id = $1 ORDER BY created_at DESC LIMIT $2 OFFSET $3",
+    "SELECT comment_id, votes, created_at, author, body, review_id, edited FROM comments WHERE review_id = $1 ORDER BY created_at DESC LIMIT $2 OFFSET $3",
     [reviewId, limit, offset]
   )
 
